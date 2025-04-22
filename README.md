@@ -68,6 +68,3 @@ If you want to run the application locally without Docker, you can do so by foll
 
 ## Contributing 🤝
 Feel free to fork this repository, submit issues, or create pull requests. Contributions are always welcome! 🌟
-
-## Links 🔗
-- [GitHub Repository](https://github.com/Friedjof/CVSSCalcV3.1)

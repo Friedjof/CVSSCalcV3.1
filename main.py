@@ -3,6 +3,13 @@ from datetime import datetime
 
 from nicegui import ui
 
+def get_version():
+    try:
+        with open('VERSION', 'r') as version_file:
+            return version_file.read().strip()
+    except FileNotFoundError:
+        return "BETA"
+
 
 # Metrics (CVSS v3.1 Base Metrics)
 AV = {'Network (N)': (0.85, 'N'), 'Adjacent (A)': (0.62, 'A'), 'Local (L)': (0.55, 'L'), 'Physical (P)': (0.2, 'P')}
@@ -119,8 +126,14 @@ with ui.column().classes('container'):
                          on_change=calculate_cvss).classes('dropdown')
 
 # Add footer
-with ui.footer().classes('nice-card').style('text-align: center;'):
-    ui.label(f"© {datetime.now().year}, Friedjof Noweck").style('margin-right: 4px;')
-    ui.link('GitHub Repository', 'https://github.com/Friedjof/CVSSCalcV3.1').style('color: #ffff00; text-decoration: none;')
-
+with ui.footer().classes('nice-card').style('text-align: center; display: flex; align-items: center;'):
+    ui.label(f"© {datetime.now().year}, Friedjof Noweck").style(
+        'margin-right: 4px;'
+    )
+    ui.link(
+        'Version on GitHub',
+        f'https://github.com/Friedjof/LaundryTracker/releases/tag/{get_version()}',
+    ).style(
+        'color: #ffff00; text-decoration: none;'
+    )
 ui.run()
