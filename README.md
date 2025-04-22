@@ -19,17 +19,17 @@ Welcome to the **CVSS v3.1 Calculator**! This project provides an intuitive UI f
 
 #### GitHub Registry
 
-1. Lade das neueste Docker-Image aus der GitHub-Registry herunter:
+1. Pull the Docker image from GitHub Container Registry:
    ```bash
    docker pull ghcr.io/friedjof/cvsscalcv3.1:latest
    ```
 
-2. Starte den Container:
+2. Start the Docker container:
    ```bash
    docker run -d -p 80:8080 ghcr.io/friedjof/cvsscalcv3.1:latest
    ```
 
-3. Öffne deinen Browser und navigiere zu:
+3. Open your browser and navigate to:
    ```
    http://localhost
    ```
