@@ -4,20 +4,20 @@ from datetime import datetime
 from nicegui import ui
 
 
-# Metriken (CVSS v3.1 Base Metrics)
-AV = {'Netzwerk (N)': (0.85, 'N'), 'Angrenzend (A)': (0.62, 'A'), 'Lokal (L)': (0.55, 'L'), 'Physisch (P)': (0.2, 'P')}
-AC = {'Niedrig (L)': (0.77, 'L'), 'Hoch (H)': (0.44, 'H')}
-PR_U = {'Keine (N)': (0.85, 'N'), 'Niedrig (L)': (0.62, 'L'), 'Hoch (H)': (0.27, 'H')}
-PR_C = {'Keine (N)': (0.85, 'N'), 'Niedrig (L)': (0.68, 'L'), 'Hoch (H)': (0.5, 'H')}
-UI = {'Keine (N)': (0.85, 'N'), 'Erforderlich (R)': (0.62, 'R')}
-S = {'Unverändert (U)': (6.42, 'U'), 'Geändert (C)': (7.52, 'C')}
-CIA = {'Keine (N)': (0.0, 'N'), 'Niedrig (L)': (0.22, 'L'), 'Hoch (H)': (0.56, 'H')}
+# Metrics (CVSS v3.1 Base Metrics)
+AV = {'Network (N)': (0.85, 'N'), 'Adjacent (A)': (0.62, 'A'), 'Local (L)': (0.55, 'L'), 'Physical (P)': (0.2, 'P')}
+AC = {'Low (L)': (0.77, 'L'), 'High (H)': (0.44, 'H')}
+PR_U = {'None (N)': (0.85, 'N'), 'Low (L)': (0.62, 'L'), 'High (H)': (0.27, 'H')}
+PR_C = {'None (N)': (0.85, 'N'), 'Low (L)': (0.68, 'L'), 'High (H)': (0.5, 'H')}
+UI = {'None (N)': (0.85, 'N'), 'Required (R)': (0.62, 'R')}
+S = {'Unchanged (U)': (6.42, 'U'), 'Changed (C)': (7.52, 'C')}
+CIA = {'None (N)': (0.0, 'N'), 'Low (L)': (0.22, 'L'), 'High (H)': (0.56, 'H')}
 
-ui.page_title("CVSS v3.1 Rechner")
+ui.page_title("CVSS v3.1 Calculator")
 ui.add_css('static/styles.css')
 
 with ui.column().classes('container'):
-    ui.label('💻 CVSS v3.1 Rechner – Basisbewertung').classes('title')
+    ui.label('💻 CVSS v3.1 Calculator – Base Score').classes('title')
 
     def parse_vector():
         try:
@@ -25,7 +25,7 @@ with ui.column().classes('container'):
 
             # regex form check
             if re.match(r"^CVSS:3\.1/(AV:[NALP]/AC:[LH]/PR:[NLH]/UI:[NR]/S:[UC]/C:[NHL]/I:[NHL]/A:[NHL])$", vector) is None:
-                raise ValueError("Ungültiger Vektor. Bitte überprüfen Sie die Eingabe.")
+                raise ValueError("Invalid vector. Please check your input.")
 
             parts = vector.replace("CVSS:3.1/", "").split("/")
             values = {part.split(":")[0]: part.split(":")[1] for part in parts}
@@ -40,12 +40,12 @@ with ui.column().classes('container'):
             dd_a.value = next(key for key, val in CIA.items() if val[1] == values.get("A"))
 
         except Exception as e:
-            result_score_label.text = f"⚠️ Fehler: {str(e)}"
+            result_score_label.text = f"⚠️ Error: {str(e)}"
             result_score_label.classes('error')
 
     def calculate_cvss():
         scope_key = dd_s.value
-        pr_lookup = PR_U if scope_key == 'Unverändert (U)' else PR_C
+        pr_lookup = PR_U if scope_key == 'Unchanged (U)' else PR_C
 
         try:
             av = AV[dd_av.value][0]
@@ -69,7 +69,7 @@ with ui.column().classes('container'):
 
             if impact <= 0:
                 base_score = 0.0
-            elif scope_key == 'Unverändert (U)':
+            elif scope_key == 'Unchanged (U)':
                 base_score = min(impact_score + exploitability, 10)
             else:
                 base_score = min(1.08 * (impact_score + exploitability), 10)
@@ -90,35 +90,35 @@ with ui.column().classes('container'):
 
         except Exception as e:
             if str(e) != "None":
-                result_score_label.text = f"⚠️ Fehler: {str(e)}"
+                result_score_label.text = f"⚠️ Error: {str(e)}"
                 result_score_label.classes('error')
 
-    vector_input = ui.input(label="Vektor eingeben (optional)",
+    vector_input = ui.input(label="Enter vector (optional)",
                             on_change=lambda x: (parse_vector(), calculate_cvss())).classes('input')
 
     result_score_label = ui.label("CVSS Score: -").classes('result')
 
     with ui.row().classes('nice-card'):
-        dd_av = ui.select(list(AV.keys()), label="Angriffsvektor (AV)",
+        dd_av = ui.select(list(AV.keys()), label="Attack Vector (AV)",
                           on_change=calculate_cvss).classes('dropdown')
-        dd_ac = ui.select(list(AC.keys()), label="Angriffskomplexität (AC)",
+        dd_ac = ui.select(list(AC.keys()), label="Attack Complexity (AC)",
                           on_change=calculate_cvss).classes('dropdown')
-        dd_pr = ui.select(list(PR_U.keys()), label="Erforderliche Berechtigungen (PR)",
+        dd_pr = ui.select(list(PR_U.keys()), label="Privileges Required (PR)",
                           on_change=calculate_cvss).classes('dropdown')
-        dd_ui = ui.select(list(UI.keys()), label="Benutzerinteraktion (UI)",
+        dd_ui = ui.select(list(UI.keys()), label="User Interaction (UI)",
                           on_change=calculate_cvss).classes('dropdown')
         dd_s = ui.select(list(S.keys()), label="Scope (S)",
                          on_change=calculate_cvss).classes('dropdown')
 
     with ui.row().classes('nice-card'):
-        dd_c = ui.select(list(CIA.keys()), label="Vertraulichkeit (C)",
+        dd_c = ui.select(list(CIA.keys()), label="Confidentiality (C)",
                          on_change=calculate_cvss).classes('dropdown')
-        dd_i = ui.select(list(CIA.keys()), label="Integrität (I)",
+        dd_i = ui.select(list(CIA.keys()), label="Integrity (I)",
                          on_change=calculate_cvss).classes('dropdown')
-        dd_a = ui.select(list(CIA.keys()), label="Verfügbarkeit (A)",
+        dd_a = ui.select(list(CIA.keys()), label="Availability (A)",
                          on_change=calculate_cvss).classes('dropdown')
 
-# Footer hinzufügen
+# Add footer
 with ui.footer().classes('nice-card').style('text-align: center;'):
     ui.label(f"© {datetime.now().year}, Friedjof Noweck").style('margin-right: 4px;')
     ui.link('GitHub Repository', 'https://github.com/Friedjof/CVSSCalcV3.1').style('color: #ffff00; text-decoration: none;')
