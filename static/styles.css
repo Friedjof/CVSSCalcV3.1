@@ -1,0 +1,99 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.nice-card {
+    padding: 8px;
+    border-radius: 10px;
+    margin: 6px auto;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+}
+
+label {
+    color: #cccccc;
+    font-size: 0.9rem;
+}
+
+.ui-input, .ui-select {
+    font-size: 0.85rem;
+    height: 30px;
+}
+
+.ui-select {
+    max-width: 100%;
+    width: 100%;
+}
+
+.container {
+    margin: auto;
+    width: 100%;
+    max-width: 600px;
+    padding-top: 12px;
+}
+
+.title {
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.input {
+    width: 100%;
+}
+
+.result {
+    font-size: 1.2rem;
+    margin-top: 12px;
+    text-align: center;
+}
+
+.score {
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.score.red {
+    color: red;
+}
+
+.score.orange {
+    color: orange;
+}
+
+.score.yellow {
+    color: yellow;
+}
+
+.score.lightgreen {
+    color: lightgreen;
+}
+
+.error {
+    color: red;
+}
+
+.dropdown {
+    width: 100%;
+    margin: 0 8px 4px 8px;
+}
+
+@media (max-width: 768px) {
+    .nice-card {
+        padding: 4px;
+        margin: 2px auto;
+    }
+    label {
+        font-size: 0.75rem;
+    }
+    .ui-input, .ui-select {
+        font-size: 0.75rem;
+        height: 26px;
+    }
+}
