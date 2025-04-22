@@ -132,7 +132,7 @@ with ui.footer().classes('nice-card').style('text-align: center; display: flex; 
     )
     ui.link(
         'Version on GitHub',
-        f'https://github.com/Friedjof/LaundryTracker/releases/tag/{get_version()}',
+        f'https://github.com/Friedjof/CVSSCalcV3.1/releases/tag/{get_version()}',
     ).style(
         'color: #ffff00; text-decoration: none;'
     )

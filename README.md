@@ -14,6 +14,25 @@ Welcome to the **CVSS v3.1 Calculator**! This project provides an intuitive UI f
 - Docker and Docker Compose installed on your system.
 
 ### Setup with Docker 🐳
+
+#### GitHub Registry
+
+1. Lade das neueste Docker-Image aus der GitHub-Registry herunter:
+   ```bash
+   docker pull ghcr.io/friedjof/cvsscalcv3.1:latest
+   ```
+
+2. Starte den Container:
+   ```bash
+   docker run -d -p 80:8080 ghcr.io/friedjof/cvsscalcv3.1:latest
+   ```
+
+3. Öffne deinen Browser und navigiere zu:
+   ```
+   http://localhost
+   ```
+
+#### Local
 1. Clone this repository:
    ```bash
    git clone https://github.com/Friedjof/CVSSCalcV3.1.git
