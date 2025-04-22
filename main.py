@@ -136,4 +136,5 @@ with ui.footer().classes('nice-card').style('text-align: center; display: flex; 
     ).style(
         'color: #ffff00; text-decoration: none;'
     )
-ui.run()
+
+ui.run(favicon="🧮")

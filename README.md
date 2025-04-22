@@ -8,6 +8,8 @@ Welcome to the **CVSS v3.1 Calculator**! This project provides an intuitive UI f
 - Dockerized setup for easy deployment. 🐳
 - Clean and responsive design.
 
+![CVSS v3.1 Calculator Screenshot](/media/preview-01.png)
+
 ## Getting Started 🛠️
 
 ### Prerequisites
