@@ -130,14 +130,26 @@ def main():
 
     # Add footer
     with ui.footer().classes('nice-card').style('text-align: center; display: flex; align-items: center;'):
-        ui.label(f"© {datetime.now().year}, Friedjof Noweck").style(
+        ui.label(f"© {datetime.now().year}").style(
             'margin-right: 4px;'
+        )
+        ui.link(
+            'Friedjof Noweck',
+            'https://github.com/Friedjof',
+        ).style(
+            'color: #ffff00; text-decoration: none;'
         )
         ui.link(
             'Version on GitHub',
             f'https://github.com/Friedjof/CVSSCalcV3.1/releases/tag/{get_version()}',
         ).style(
             'color: #ffff00; text-decoration: none;'
+        )
+        ui.link(
+            'Legal Notice',
+            'https://gist.github.com/Friedjof/9aa6bee1b19f73d48fe72f0af5fffc5d'
+        ).style(
+            'color: #ffff00; text-decoration: none; margin-left: 4px;'
         )
 
 ui.run(favicon="🧮")
