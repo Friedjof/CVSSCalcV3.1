@@ -1,11 +1,13 @@
 from nicegui import ui
+from fastapi import Request
 
 from lib.elements import DropdownWithHelp, VectorInput, Header, Footer
 from lib.metrics import metrics
 
 
 @ui.page('/')
-def main():
+def main(request: Request):
+    vector_param = request.query_params.get('vector', None)
     dropdown_objects = []
     ui.page_title("CVSS v3.1 Calculator")
     ui.add_css('static/styles.css')
@@ -15,13 +17,17 @@ def main():
     ''')
 
     with ui.column().classes('container'):
-        Header()
+        header = Header()
 
         vector_input = VectorInput(
-            label='CVSS Vector (Optional)'
+            label='CVSS Vector (Optional)',
+            vector=vector_param,
+            header=header,
         )
 
         with ui.row().classes('nice-card dropdown-row'):
+            values = vector_input.get_dropdown_value()
+
             for i, (metric_key, metric) in enumerate(metrics.items()):
                 # Create a dropdown for each metric
                 dropdown_objects.append(DropdownWithHelp(
@@ -29,7 +35,8 @@ def main():
                     key=metric_key,
                     options=metric['options'],
                     help_text=metric['help_text'],
-                    on_change=vector_input.calculate_vector
+                    on_change=vector_input.calculate_vector,
+                    value=values[metric_key] if values is not None else None
                 ))
                 dropdown_objects[i].classes('dropdown')
 

@@ -6,7 +6,7 @@ from nicegui.element import Element
 
 
 class DropdownWithHelp(Element):
-    def __init__(self, label: str, key: str, options: dict, help_text: str, on_change: callable):
+    def __init__(self, label: str, key: str, options: dict, help_text: str, on_change: callable, value: str = None):
         self.key = key
         self.options = options
         self.title = label
@@ -24,6 +24,9 @@ class DropdownWithHelp(Element):
                 '?', on_click=lambda: self.show_help_dialog(help_text, options)
             ).props('flat dense round').classes('text-white bg-primary border border-primary shadow-lg').style(
                 'margin: auto; display: flex; justify-content: center; align-items: center;')
+
+        if value:
+            self.set_tag(value)
 
     def get_key(self) -> str:
         return self.key
@@ -61,17 +64,22 @@ class DropdownWithHelp(Element):
 
 
 class VectorInput(Element):
-    def __init__(self, label: str):
+    def __init__(self, label: str, header: "Header", vector: str = None):
         super().__init__('div')
         self.dropdown_objects = []
         self.score = .0
+        self.header = header
         self.vector = ""
+
         with self.classes('nice-card vector-input'):
             # Eingabefeld
             self.input = ui.input(label=label, on_change=self.parse_vector).style('width: 100%;')
 
             # Score-Anzeige
             self.score_label = ui.label("-").classes('score')
+
+        if vector:
+            self.set_vector(vector)
 
     @staticmethod
     def get_criticality(score: float) -> str:
@@ -104,6 +112,10 @@ class VectorInput(Element):
     def set_vector(self, vector: str):
         self.vector = vector
         self.input.value = vector
+        self.header.set_link(f'/?vector={vector}')
+
+    def get_vector(self) -> str:
+        return self.input.value
 
     def set_dropdown_objects(self, dropdown_objects: list[DropdownWithHelp]):
         self.dropdown_objects = dropdown_objects
@@ -151,6 +163,23 @@ class VectorInput(Element):
 
         return impact, impact_score, exploitability, base_score
 
+    def get_dropdown_value(self) -> dict:
+        """
+        Get the dropdown value from the vector string.
+        :return: A tuple of values for AV, AC, PR, UI, S, C, I, A.
+        """
+        if re.search(r"^CVSS:3\.1/(AV:[NALP]/AC:[LH]/PR:[NLH]/UI:[NR]/S:[UC]/C:[NHL]/I:[NHL]/A:[NHL])$", self.vector) is None:
+            return None
+
+        # Parse the vector
+        vector = self.vector.strip()
+        parts = vector.replace("CVSS:3.1/", "").split("/")
+        values = {part.split(":")[0]: part.split(":")[1] for part in parts}
+
+
+
+        return values
+
     def calculate_vector(self) -> None:
         data = self.get_data()
 
@@ -173,9 +202,22 @@ class VectorInput(Element):
 class Header(Element):
     def __init__(self):
         super().__init__('div')
+        self.link = None
         with self.classes('navbar'):
             ui.label('CVSS v3.1 Calculator 🧮').classes('title')
+            ui.button('', on_click=self.share).props('icon=share').classes(
+                    'share-button'
+                ).style('margin-left: auto;')
 
+    def set_link(self, link: str) -> None:
+        self.link = link
+
+    def share(self) -> None:
+        ui.notify('Link copied to clipboard!', color='success')
+        ui.run_javascript(f'''
+            const fullLink = window.location.origin + "{self.link}";
+            navigator.clipboard.writeText(fullLink);
+        ''')
 
 class Footer:
     def __init__(self, vector_input: VectorInput):
