@@ -14,6 +14,74 @@ body {
     text-align: center;
 }
 
+.dropdown-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.vector-input {
+    margin-top: 65px;
+}
+
+.navbar {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 5px 10px;
+    text-align: center;
+    font-size: 0.7rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40%;
+    height: 80px;
+    min-width: 350px;
+    background-color: #5898d4;
+    color: white;
+    border-radius: 10px;
+}
+
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    padding: 5px 10px;
+    text-align: center;
+    font-size: 0.7rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40%;
+    min-width: 350px;
+    margin: auto;
+    border-radius: 10px 10px 0 0;
+}
+
+.footer-content {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    padding: 5px 10px;
+    text-align: center;
+    font-size: 0.7rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.footer-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+}
+
 label {
     color: #cccccc;
     font-size: 0.9rem;
@@ -59,61 +127,8 @@ label {
     text-align: center;
 }
 
-.none {
-    color: gray;
-}
-
-.low {
-    color: green;
-}
-
-.medium {
-    color: orange;
-}
-
-.high {
-    color: red;
-}
-
-.critical {
-    color: darkred;
-    font-weight: bold;
-}
-
-.bg-primary {
-    background-color: #007bff; /* Auffälliges Blau */
-}
-
-.border-primary {
-    border-color: #0056b3; /* Dunkleres Blau für den Rahmen */
-}
-
 .text-white {
     color: #ffffff; /* Weiße Schrift */
-}
-
-.shadow-lg {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Stärkere Schatten */
-}
-
-.score.red {
-    color: red;
-}
-
-.score.orange {
-    color: orange;
-}
-
-.score.yellow {
-    color: yellow;
-}
-
-.score.lightgreen {
-    color: lightgreen;
-}
-
-.error {
-    color: red;
 }
 
 .dropdown {
@@ -128,4 +143,72 @@ label {
     font-size: 0.8rem; /* Kleinere Schriftgröße */
     padding: 2px 4px; /* Weniger Innenabstand */
     line-height: normal; /* Standard-Zeilenhöhe */
+}
+
+/* Runder Button unten rechts */
+.round-button {
+    position: fixed;
+    bottom: 40px; /* Höher positioniert */
+    right: 50%; /* In die Mitte verschoben */
+    transform: translateX(50%); /* Zentriert */
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #007bff;
+    color: #ffffff;
+    border: 2px solid #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+}
+
+.dialog-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.dialog-content {
+    font-size: 0.9rem;
+    color: #333333;
+    margin-bottom: 16px;
+}
+
+.dialog-close-button {
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.dialog-close-button:hover {
+    background-color: #0056b3;
+}
+
+/* Kritikalitätsstufen */
+.none {
+    color: #cccccc; /* Grau für keine Kritikalität */
+}
+
+.low {
+    color: #4caf50; /* Grün für niedrige Kritikalität */
+}
+
+.medium {
+    color: #ff9800; /* Orange für mittlere Kritikalität */
+}
+
+.high {
+    color: #f44336; /* Rot für hohe Kritikalität */
+}
+
+.critical {
+    color: #9c27b0; /* Lila für kritische Kritikalität */
+    font-weight: bold; /* Fett für Hervorhebung */
 }

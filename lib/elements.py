@@ -1,7 +1,9 @@
-import datetime
 import re
+from datetime import datetime
+
 from nicegui import ui
 from nicegui.element import Element
+
 
 class DropdownWithHelp(Element):
     def __init__(self, label: str, key: str, options: dict, help_text: str, on_change: callable):
@@ -10,7 +12,6 @@ class DropdownWithHelp(Element):
         self.title = label
         super().__init__('div')
         with self.classes('flex dropdown').style('align-items: flex-end'):
-            # Dropdown
             self.dropdown = ui.select(
                 options=list(options.keys()),
                 label=label,
@@ -65,7 +66,7 @@ class VectorInput(Element):
         self.dropdown_objects = []
         self.score = .0
         self.vector = ""
-        with self.classes('nice-card'):
+        with self.classes('nice-card vector-input'):
             # Eingabefeld
             self.input = ui.input(label=label, on_change=self.parse_vector).style('width: 100%;')
 
@@ -130,10 +131,28 @@ class VectorInput(Element):
         # Calculate the vector and score
         self.calculate_vector()
 
-    def calculate_vector(self) -> None:
+    def get_data(self) -> dict:
         data = dict()
         for dropdown in self.dropdown_objects:
             data.update({dropdown.get_key(): dropdown.get_value()})
+        return data
+
+    @staticmethod
+    def calculate(av: float, ac: float, pr: float, ui_: float, s: str, c: float, i: float, a: float) -> tuple:
+        # Calculate the score
+        impact = 1 - ((1 - c) * (1 - i) * (1 - a))
+        impact_score = 6.42 * impact if s == 'C' else 7.52 * (impact - 0.029) - 3.25 * (impact - 0.02) ** 15
+        exploitability = 8.22 * av * ac * pr * ui_
+
+        if s == 'U':
+            base_score = min(impact_score + exploitability, 10)
+        else:
+            base_score = min(1.08 * (impact_score + exploitability), 10)
+
+        return impact, impact_score, exploitability, base_score
+
+    def calculate_vector(self) -> None:
+        data = self.get_data()
 
         if len(data) != 8:
             return
@@ -142,16 +161,84 @@ class VectorInput(Element):
         vector = f"CVSS:3.1/AV:{data['AV'][1]}/AC:{data['AC'][1]}/PR:{data['PR'][1]}/UI:{data['UI'][1]}/S:{data['S'][1]}/C:{data['C'][1]}/I:{data['I'][1]}/A:{data['A'][1]}"
 
         # Calculate the score
-        impact = 1 - ((1 - data['C'][0]) * (1 - data['I'][0]) * (1 - data['A'][0]))
-        impact_score = 6.42 * impact if data['S'][1] == 'U' else 7.52 * impact
-        exploitability = 8.22 * data['AV'][0] * data['AC'][0] * data['PR'][0] * data['UI'][0]
-
-        if impact <= .0:
-            base_score = .0
-        elif data['S'][1] == 'U':
-            base_score = min(impact_score + exploitability, 10)
-        else:
-            base_score = min(1.08 * (impact_score + exploitability), 10)
+        impact, impact_score, exploitability, base_score = self.calculate(
+            data['AV'][0], data['AC'][0], data['PR'][0], data['UI'][0],
+            data['S'][1], data['C'][0], data['I'][0], data['A'][0]
+        )
 
         self.set_vector(vector)
         self.set_score(base_score)
+
+
+class Header(Element):
+    def __init__(self):
+        super().__init__('div')
+        with self.classes('navbar'):
+            ui.label('CVSS v3.1 Calculator 🧮').classes('title')
+
+
+class Footer:
+    def __init__(self, vector_input: VectorInput):
+        self.vector_input = vector_input
+        self.label = None
+        self.dialog = None
+        self.latex_output = None
+        self.create_footer()
+
+    def create_footer(self):
+        with ui.footer().classes('footer'):
+            with ui.row().classes('footer-content'):
+                ui.link('Legal Notice', 'https://gist.github.com/Friedjof/9aa6bee1b19f73d48fe72f0af5fffc5d').classes('footer-link')
+                ui.link('Friedjof Noweck', 'https://github.com/Friedjof').classes('footer-link')
+                ui.link(
+                    'GitHub',
+                    f'https://github.com/Friedjof/CVSSCalcV3.1/releases/tag/{self.get_version()}',
+                ).classes('footer-link')
+
+            ui.button('📄', on_click=self.show_dialog).classes('round-button')
+
+    def show_dialog(self):
+        if not self.dialog:
+            with ui.dialog() as self.dialog:
+                with ui.card():
+                    ui.label('More Information').classes('text-lg font-bold')
+                    ui.separator()
+                    self.latex_output = ui.html('<div id="latex-cvss"></div>').classes('dialog-content')
+                    ui.button('Close', on_click=self.dialog.close).classes('dialog-close-button')
+
+        self.dialog.open()
+
+        data = self.vector_input.get_data()
+        av, ac, pr, ui_, s, c, i, a = data['AV'][0], data['AC'][0], data['PR'][0], data['UI'][0], data['S'][1], data['C'][0], data['I'][0], data['A'][0]
+
+        impact, impact_score, exploitability, base_score = self.vector_input.calculate(
+            av, ac, pr, ui_, s, c, i, a
+        )
+
+        if s == 'U':
+            base_score_str = fr"{{Base Score}} = min\left( {impact_score:.2f} + {exploitability:.2f}, 10 \right) = \underline{{\underline{{{base_score:.2f}}}}} \text"
+            impact_score_str = fr"{{Impact Score}} = 7.52 \cdot \left( {impact:.2f} - 0.029 \right) - 3.25 \cdot \left( {impact:.2f} - 0.02 \right)^{15} = {impact_score:.2f}"
+        else:
+            base_score_str = fr"{{Base Score}} = min\left( 1.08 \cdot {impact_score:.2f} + {exploitability:.2f}, 10 \right) = \underline{{\underline{{{base_score:.2f}}}}} \text"
+            impact_score_str = fr"{{Impact Score}} = 6.42 \cdot {impact:.2f} = {impact_score:.2f}"
+
+        latex_expression = fr"""
+        \text{{Impact}} = 1 - (1 - {c}) \cdot (1 - {i}) \cdot (1 - {a}) = {impact:.2f} \\
+        \text{impact_score_str} \\
+        \text{{Exploitability}} = 8.22 \cdot {av} \cdot {ac} \cdot {pr} \cdot {ui_} = {exploitability:.2f} \\
+        \text{base_score_str} \\
+        """
+
+        ui.run_javascript(f'''
+            katex.render(String.raw`{latex_expression}`, document.getElementById("latex-cvss"), {{
+                displayMode: true
+            }});
+        ''')
+
+    @staticmethod
+    def get_version() -> str:
+        try:
+            with open('VERSION', 'r') as version_file:
+                return version_file.read().strip()
+        except FileNotFoundError:
+            return "unknown"
