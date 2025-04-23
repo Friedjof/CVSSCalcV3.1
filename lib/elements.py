@@ -122,17 +122,11 @@ class VectorInput(Element):
         self.calculate_vector()
 
     def parse_vector(self) -> None:
-        vector = self.input.value
+        values = self.get_dropdown_values()
 
-        if re.search(r"^CVSS:3\.1/(AV:[NALP]/AC:[LH]/PR:[NLH]/UI:[NR]/S:[UC]/C:[NHL]/I:[NHL]/A:[NHL])$", vector) is None:
+        if values is None:
             self.set_score(.0)
             return
-
-        # Parse the vector
-        vector = vector.strip()
-
-        parts = vector.replace("CVSS:3.1/", "").split("/")
-        values = {part.split(":")[0]: part.split(":")[1] for part in parts}
 
         # Update the dropdowns
         for dropdown in self.dropdown_objects:
@@ -163,22 +157,18 @@ class VectorInput(Element):
 
         return impact, impact_score, exploitability, base_score
 
-    def get_dropdown_value(self) -> dict:
+    def get_dropdown_values(self) -> dict | None:
         """
         Get the dropdown value from the vector string.
         :return: A tuple of values for AV, AC, PR, UI, S, C, I, A.
         """
-        if re.search(r"^CVSS:3\.1/(AV:[NALP]/AC:[LH]/PR:[NLH]/UI:[NR]/S:[UC]/C:[NHL]/I:[NHL]/A:[NHL])$", self.vector) is None:
+        if re.search(r"^CVSS:3\.1/(AV:[NALP]/AC:[LH]/PR:[NLH]/UI:[NR]/S:[UC]/C:[NHL]/I:[NHL]/A:[NHL])$", self.input.value) is None:
             return None
 
         # Parse the vector
-        vector = self.vector.strip()
+        vector = self.input.value.strip()
         parts = vector.replace("CVSS:3.1/", "").split("/")
-        values = {part.split(":")[0]: part.split(":")[1] for part in parts}
-
-
-
-        return values
+        return {part.split(":")[0]: part.split(":")[1] for part in parts}
 
     def calculate_vector(self) -> None:
         data = self.get_data()

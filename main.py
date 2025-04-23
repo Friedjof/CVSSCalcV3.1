@@ -20,13 +20,13 @@ def main(request: Request):
         header = Header()
 
         vector_input = VectorInput(
-            label='CVSS Vector (Optional)',
+            label='CVSS Vector',
             vector=vector_param,
             header=header,
         )
 
         with ui.row().classes('nice-card dropdown-row'):
-            values = vector_input.get_dropdown_value()
+            values = vector_input.get_dropdown_values()
 
             for i, (metric_key, metric) in enumerate(metrics.items()):
                 # Create a dropdown for each metric
