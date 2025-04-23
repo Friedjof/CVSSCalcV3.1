@@ -5,7 +5,7 @@ body {
 }
 
 .nice-card {
-    padding: 8px;
+    padding: 3px 8px;
     border-radius: 10px;
     margin: 6px auto;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
@@ -59,6 +59,43 @@ label {
     text-align: center;
 }
 
+.none {
+    color: gray;
+}
+
+.low {
+    color: green;
+}
+
+.medium {
+    color: orange;
+}
+
+.high {
+    color: red;
+}
+
+.critical {
+    color: darkred;
+    font-weight: bold;
+}
+
+.bg-primary {
+    background-color: #007bff; /* Auffälliges Blau */
+}
+
+.border-primary {
+    border-color: #0056b3; /* Dunkleres Blau für den Rahmen */
+}
+
+.text-white {
+    color: #ffffff; /* Weiße Schrift */
+}
+
+.shadow-lg {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Stärkere Schatten */
+}
+
 .score.red {
     color: red;
 }
@@ -84,16 +121,11 @@ label {
     margin: 0 8px 4px 8px;
 }
 
-@media (max-width: 768px) {
-    .nice-card {
-        padding: 4px;
-        margin: 2px auto;
-    }
-    label {
-        font-size: 0.75rem;
-    }
-    .ui-input, .ui-select {
-        font-size: 0.75rem;
-        height: 26px;
-    }
+.ui-select {
+    max-width: 100%;
+    width: 100%;
+    height: 26px; /* Noch niedrigere Höhe */
+    font-size: 0.8rem; /* Kleinere Schriftgröße */
+    padding: 2px 4px; /* Weniger Innenabstand */
+    line-height: normal; /* Standard-Zeilenhöhe */
 }
